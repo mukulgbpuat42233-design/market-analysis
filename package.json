@@ -1,0 +1,14 @@
+{
+  "name": "thdc-unified-power-market-study-portal",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "mkdir -p dist && cp -r index.html dist/ 2>/dev/null || true",
+    "lint": "node -c server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

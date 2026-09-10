@@ -1,0 +1,8 @@
+{
+  "name": "THDC Unified Power Market Study Portal",
+  "description": "Unified power market study portal for analyzing IEX electricity market data across DAM, GDAM, RTM, TAM, and Solar market segments with 96-block x Days MCP heatmap visualization.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
