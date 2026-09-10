@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>THDC Unified Power Market Study Portal</title>
-<meta name="description" content="Unified power market study portal for analyzing IEX electricity market data across DAM, GDAM, RTM, TAM, and Solar market segments with 36-month persistent storage and single-prompt AI custom report generation.">
+<meta name="description" content="Unified power market study portal for analyzing IEX electricity market data across DAM, GDAM, RTM, TAM, and Solar market segments with 60-month persistent storage and single-prompt AI custom report generation.">
 <meta property="og:title" content="THDC Unified Power Market Study Portal">
-<meta property="og:description" content="Unified power market study portal for analyzing IEX electricity market data across DAM, GDAM, RTM, TAM, and Solar market segments with 36-month persistent storage and single-prompt AI custom report generation.">
+<meta property="og:description" content="Unified power market study portal for analyzing IEX electricity market data across DAM, GDAM, RTM, TAM, and Solar market segments with 60-month persistent storage and single-prompt AI custom report generation.">
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
@@ -2869,7 +2869,7 @@ body.layout-transposed-sidebar .wrap{
       </a>
       <div class="brand-text-block">
         <div class="brand-title">THDC Unified Power Market Study Portal</div>
-        <div class="brand-sub">Commercial &amp; Regulatory Energy Economics Operations • 36-Month Intelligence</div>
+        <div class="brand-sub">Commercial &amp; Regulatory Energy Economics Operations • 60-Month Intelligence</div>
       </div>
     </div>
 
@@ -2901,10 +2901,10 @@ body.layout-transposed-sidebar .wrap{
 
   <!-- Transposed & Restructured Command Grid (4 Structured Functional Pillars) -->
   <div class="topbar-deck-grid" id="topbarDeckGrid">
-    <!-- Pillar 1: Data Ingestion & 36M Vault -->
+    <!-- Pillar 1: Data Ingestion & 60M Vault -->
     <div class="cmd-pillar pillar-data">
       <div class="cmd-pillar-header">
-        <span class="cmd-pillar-tag">📥 DATA SOURCE &amp; 36M VAULT</span>
+        <span class="cmd-pillar-tag">📥 DATA SOURCE &amp; 60M VAULT</span>
       </div>
       <div class="cmd-pillar-items">
         <label id="uploadExcelBtn" class="topbar-btn upload-excel" for="fileInput" title="Upload Excel Workbook" style="background:linear-gradient(135deg,#107c41,#21a366)">
@@ -2915,8 +2915,8 @@ body.layout-transposed-sidebar .wrap{
         <button id="batchUploadTopBtn" class="sub-tool-btn batch-tool" onclick="openBatchUploadModal()" title="Upload Multiple Monthly Excel Files">
           <span class="tool-icon">📁</span> Multi-Excel
         </button>
-        <button id="vaultNavBtn" class="sub-tool-btn vault-tool" onclick="scrollToVault()" title="Open 36-Month Multi-Segment Data Vault">
-          <span class="tool-icon">📂</span> 36M Vault
+        <button id="vaultNavBtn" class="sub-tool-btn vault-tool" onclick="scrollToVault()" title="Open 60-Month Multi-Segment Data Vault">
+          <span class="tool-icon">📂</span> 60M Vault
         </button>
         <button id="sampleDataBtn" class="sub-tool-btn benchmark-tool" onclick="loadSampleData()" title="Quick load benchmark dataset">
           <span class="tool-icon">⚡</span> Benchmark
@@ -2988,7 +2988,7 @@ body.layout-transposed-sidebar .wrap{
       <div class="cover-header-badge">🏛️ THDC INDIA LIMITED • POWER TRADING &amp; MARKET OPERATIONS</div>
       <h1 class="cover-title">Power Market Clearing Price (MCP) Intelligence Portal</h1>
       <p class="cover-subtitle">
-        Enterprise multi-segment analysis across 36 continuous months of IEX electricity market data.
+        Enterprise multi-segment analysis across at least 60 continuous months (5+ full years) of IEX electricity market data.
         Equipped with 96-block diurnal heatmap matrices, regulatory CERC audit compliance, and single-prompt AI executive report synthesis.
       </p>
     </div>
@@ -2997,7 +2997,7 @@ body.layout-transposed-sidebar .wrap{
     <div class="cover-segment-section">
       <div class="cover-section-header">
         <h2>Select Market Segment</h2>
-        <span class="cover-section-tag">Each segment maintains independent 36-month storage</span>
+        <span class="cover-section-tag">Each segment maintains independent 60-month persistent storage</span>
       </div>
 
       <div class="segment-cards-grid">
@@ -3109,13 +3109,13 @@ body.layout-transposed-sidebar .wrap{
 
     <!-- Cover Page Quick Actions Bar (Evenly Spaced 4 Buttons) -->
     <div class="cover-action-toolbar">
-      <button class="cover-toolbar-btn btn-benchmark" onclick="loadBenchmark36Months(S.segment || 'DAM', true)" id="coverLoad36Btn">
+      <button class="cover-toolbar-btn btn-benchmark" onclick="loadBenchmark60Months(S.segment || 'DAM', true)" id="coverLoad60Btn">
         <span class="btn-icon">⚡</span>
-        <span class="btn-text"><b>Load 36-Month Dataset</b><small>105,120 Blocks (2023–2025)</small></span>
+        <span class="btn-text"><b>Load 60-Month Dataset</b><small>175,296 Blocks (2021–2025)</small></span>
       </button>
       <button class="cover-toolbar-btn btn-vault" onclick="scrollToVault()" id="coverVaultBtn">
         <span class="btn-icon">📂</span>
-        <span class="btn-text"><b>36-Month Data Vault</b><small>Manage Multi-Segment Storage</small></span>
+        <span class="btn-text"><b>60-Month Data Vault</b><small>Manage Multi-Segment Storage</small></span>
       </button>
       <button class="cover-toolbar-btn btn-ai" onclick="openAiReportModal()" id="coverAiBtn">
         <span class="btn-icon">✨</span>
@@ -3127,12 +3127,12 @@ body.layout-transposed-sidebar .wrap{
       </button>
     </div>
 
-    <!-- 36-Month Multi-Segment Data Vault & Storage Space Panel -->
+    <!-- 60-Month Multi-Segment Data Vault & Storage Space Panel -->
     <div class="vault-panel-section" id="vaultPanelSection">
       <div class="vault-header">
         <div class="vault-title-wrap">
-          <h3>📂 36-Month Multi-Segment Data Vault &amp; Storage Hub</h3>
-          <p>Persistent high-capacity IndexedDB disk storage designed to store 36 continuous months of 96-block daily data per segment (105,120 records each • 525,600 total records across all segments).</p>
+          <h3>📂 60-Month Multi-Segment Data Vault &amp; Storage Hub</h3>
+          <p>Persistent high-capacity IndexedDB disk storage designed to store at least 60 continuous months (5 full years) of 96-block daily data per segment (175,296 records each • 876,480 total records across all 5 segments).</p>
         </div>
         <div class="vault-global-metrics">
           <div class="vault-metric-chip">
@@ -3141,7 +3141,7 @@ body.layout-transposed-sidebar .wrap{
           </div>
           <div class="vault-metric-chip">
             <span>CAPACITY</span>
-            <b>36 Mos / Segment</b>
+            <b>60+ Mos / Segment</b>
           </div>
           <div class="vault-metric-chip">
             <span>STORAGE ENGINE</span>
@@ -3160,7 +3160,7 @@ body.layout-transposed-sidebar .wrap{
         <button class="vault-btn primary" onclick="openBatchUploadModal()" style="background:linear-gradient(135deg,#059669,#047857)">
           📁 Multiple Excel Upload (Batch Monthly Ingestion)
         </button>
-        <button class="vault-btn primary" onclick="loadAllSegments36Months()">⚡ Load 36M Benchmark for All Segments</button>
+        <button class="vault-btn primary" onclick="loadAllSegments60Months()">⚡ Load 60M Benchmark for All Segments (876,480 records)</button>
         <button class="vault-btn outline" onclick="exportFullDatabaseJson()">💾 Export Database Backup (JSON)</button>
         <button class="vault-btn outline" onclick="$('backupInput').click()">↥ Restore Backup File</button>
         <button class="vault-btn danger" onclick="clearFullDatabase()">🗑 Clear Entire Storage Vault</button>
@@ -3172,22 +3172,22 @@ body.layout-transposed-sidebar .wrap{
       <div class="ai-banner-header">
         <div class="ai-badge">✨ AI-POWERED ANALYSIS • GEMINI 3.8 FLASH</div>
         <h3>Generate Customized Market Study in a Single Prompt</h3>
-        <p>Describe what you need analyzed across your 36-month market data. The AI engine synthesizes price patterns, peak tariff anomalies, diurnal duck-curves, CERC compliance, and strategic power trading recommendations.</p>
+        <p>Describe what you need analyzed across your 60-month market data. The AI engine synthesizes price patterns, multi-year trends, peak tariff anomalies, diurnal duck-curves, CERC compliance, and strategic power trading recommendations.</p>
       </div>
       <div class="ai-prompt-box">
         <div class="ai-input-wrap">
-          <textarea id="coverAiPromptInput" class="ai-prompt-input" rows="2" placeholder="e.g., Generate an executive 36-month quarterly comparison of evening peak tariffs vs daytime solar hours with battery storage arbitrage recommendations..."></textarea>
+          <textarea id="coverAiPromptInput" class="ai-prompt-input" rows="2" placeholder="e.g., Generate an executive 60-month multi-year comparison of evening peak tariffs vs daytime solar hours with battery storage arbitrage recommendations..."></textarea>
           <button class="ai-submit-btn" onclick="submitCoverAiPrompt()">
             <span>✨ Generate AI Report</span>
           </button>
         </div>
         <div class="ai-quick-prompts">
           <span class="ai-chip-label">Quick Prompts:</span>
-          <button type="button" class="ai-chip" onclick="setQuickPrompt('36-Month Seasonal Price Volatility &amp; Tariff Evolution Report')">📊 36-Month Trend &amp; Seasonality</button>
+          <button type="button" class="ai-chip" onclick="setQuickPrompt('60-Month Seasonal Price Volatility &amp; Tariff Evolution Report')">📊 60-Month Trend &amp; Seasonality</button>
           <button type="button" class="ai-chip" onclick="setQuickPrompt('Diurnal Duck-Curve &amp; Solar Moderation (Blocks 25–72 vs 73–88) Study')">☀️ Solar Duck-Curve Analysis</button>
           <button type="button" class="ai-chip" onclick="setQuickPrompt('Evening Peak (18:00–22:00) Tariff Surge &amp; CERC Price Cap Audit')">⚡ Evening Peak &amp; CERC Audit</button>
           <button type="button" class="ai-chip" onclick="setQuickPrompt('Battery Energy Storage (BESS) &amp; Pumped Hydro Arbitrage Viability')">🔋 BESS &amp; Pumped Hydro Arbitrage</button>
-          <button type="button" class="ai-chip" onclick="setQuickPrompt('Executive Board Briefing on Merit-Order Dispatch &amp; Market Dynamics')">📑 Executive Board Briefing</button>
+          <button type="button" class="ai-chip" onclick="setQuickPrompt('Executive Board Briefing on 5-Year Merit-Order Dispatch &amp; Market Dynamics')">📑 5-Year Executive Board Briefing</button>
         </div>
       </div>
     </div>
@@ -3213,6 +3213,23 @@ body.layout-transposed-sidebar .wrap{
         <div class="field"><label>Study Name</label><input id="studyName" value="DAM Market Study"></div>
         <div class="field"><label>Start Date</label><input id="d1" type="date"></div>
         <div class="field"><label>End Date</label><input id="d2" type="date"></div>
+        <div class="field" style="grid-column: 1 / -1; margin-top: 4px; padding: 8px 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #cbd5e1;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+            <label style="margin:0; font-weight:700; color:#0f172a; font-size:12px">⚡ Quick Horizon Presets (60-Month &amp; Annual):</label>
+            <span style="font-size:11px; color:#64748b">Instant Single-Click Filter</span>
+          </div>
+          <div class="date-preset-pills" style="display:flex; gap:6px; flex-wrap:wrap; align-items:center">
+            <button type="button" class="btn small" onclick="setDatePreset('all')" style="background:#0b3b6e;color:#fff;font-weight:700" title="Span all available dates">Full Horizon (All)</button>
+            <button type="button" class="btn small" onclick="setDatePreset('60m')" style="background:#0284c7;color:#fff;font-weight:700" title="Full 5 Years (60 Continuous Months)">60-Month (2021–2025)</button>
+            <button type="button" class="btn small" onclick="setDatePreset('36m')" title="36 Continuous Months">36-Month (2023–2025)</button>
+            <button type="button" class="btn small" onclick="setDatePreset('last24m')" title="Last 24 Months">Last 24M (2024–2025)</button>
+            <button type="button" class="btn small" onclick="setDatePreset('2025')" style="font-weight:600">Year 2025</button>
+            <button type="button" class="btn small" onclick="setDatePreset('2024')" style="font-weight:600">Year 2024</button>
+            <button type="button" class="btn small" onclick="setDatePreset('2023')" style="font-weight:600">Year 2023</button>
+            <button type="button" class="btn small" onclick="setDatePreset('2022')" style="font-weight:600">Year 2022</button>
+            <button type="button" class="btn small" onclick="setDatePreset('2021')" style="font-weight:600">Year 2021</button>
+          </div>
+        </div>
         <div class="field block-input-field is-active"><label>Start Block</label><input id="b1" type="number" min="1" max="96" value="1" oninput="updateBlockCount()"><div id="b1Time" class="block-time">00:00 - 00:15</div></div>
         <div class="field block-input-field is-active end"><label>End Block</label><input id="b2" type="number" min="1" max="96" value="96" oninput="updateBlockCount()"><div id="b2Time" class="block-time">23:45 - 24:00</div></div>
         <div class="field block-mode-field"><label>Block Selection Mode</label>
@@ -3383,18 +3400,18 @@ async function selectSegment(seg, autoLoad = true){
 
 async function switchActiveSegmentData(segment){
   segment = String(segment || S.segment || 'DAM').toUpperCase();
-  showLoader(`Loading ${segment} market dataset (96 blocks/day)…`);
+  showLoader(`Loading ${segment} market dataset (60 continuous months • 96 blocks/day)…`);
   await new Promise(r => setTimeout(r, 40));
   try {
     let rows = await getSegmentRowsFromVault(segment);
-    if (!rows || !rows.length) {
-      // Generate authentic 36-month dataset calibrated for this market segment
-      rows = generate36MonthsData(segment);
-      await saveRowsToVault(segment, rows, `${segment} 36M Benchmark Generator`);
+    if (!rows || rows.length < 150000) {
+      // Generate authentic 60-month dataset (5 full years) calibrated for this market segment
+      rows = generate60MonthsData(segment);
+      await saveRowsToVault(segment, rows, `${segment} 60M Benchmark Generator`);
       refreshVaultUI();
     }
     S.rows = rows;
-    S.sourceWorkbook = `${segment}_36Months_Master_2023_2025.xlsx`;
+    S.sourceWorkbook = `${segment}_60Months_Master_2021_2025.xlsx`;
     S.sourceSheet = 'MASTER_DATA';
     S.verified = true;
     S.quality = { invalid: [], dup: [], incomplete: [], blockBad: [], hourBad: [] };
@@ -3404,16 +3421,16 @@ async function switchActiveSegmentData(segment){
     if (loadStatus) {
       loadStatus.className = 'status ok';
       loadStatus.style.borderLeft = '5px solid var(--segment-accent, #0b3b6e)';
-      const startStr = rows.length && rows[0].date ? formatDateDMY(rows[0].date) : '01-Jan-2023';
+      const startStr = rows.length && rows[0].date ? formatDateDMY(rows[0].date) : '01-Jan-2021';
       const endStr = rows.length && rows[rows.length-1].date ? formatDateDMY(rows[rows.length-1].date) : '31-Dec-2025';
-      loadStatus.innerHTML = `✓ Active Market Segment: <b>${segment}</b> • <b>${rows.length.toLocaleString()} records</b> loaded (${startStr} to ${endStr})`;
+      loadStatus.innerHTML = `✓ Active Market Segment: <b>${segment}</b> • <b>${rows.length.toLocaleString()} records</b> loaded (${startStr} to ${endStr} • 60 continuous months)`;
     }
     if ($('verifyBtn')) $('verifyBtn').disabled = false;
     if ($('runBtn')) $('runBtn').disabled = false;
 
     // Run analysis immediately so charts, heatmap, duck curve, tables, and KPIs all update to this segment
     runAnalysis();
-    showToastNotification(`Loaded ${rows.length.toLocaleString()} records for ${segment}`);
+    showToastNotification(`Loaded ${rows.length.toLocaleString()} records for ${segment} (60-Month Dataset)`);
   } catch(err) {
     console.error('Error switching segment data:', err);
     showToastNotification('Failed to load ' + segment + ' data: ' + err.message, 'error');
@@ -3717,10 +3734,38 @@ function buildQuality(invalid){
 function setDateDefaults(){
   const ds=S.rows.map(r=>r.date).filter(Boolean).sort((a,b)=>a-b);
   if(!ds.length)return;
-  const start2023=new Date(2023,0,1);
-  const first2023=ds.find(d=>d>=start2023);
-  $('d1').value=iso(first2023||ds[0]);
+  $('d1').value=iso(ds[0]);
   $('d2').value=iso(ds[ds.length-1]);
+}
+
+function setDatePreset(key){
+  if (!S.rows || !S.rows.length) {
+    showToastNotification('Please load or switch segment data first.', 'warn');
+    return;
+  }
+  const ds = S.rows.map(r => r.date).filter(Boolean).sort((a, b) => a - b);
+  if (!ds.length) return;
+  const minDate = ds[0];
+  const maxDate = ds[ds.length - 1];
+
+  if (key === 'all') {
+    $('d1').value = iso(minDate);
+    $('d2').value = iso(maxDate);
+  } else if (key === '60m') {
+    $('d1').value = '2021-01-01';
+    $('d2').value = '2025-12-31';
+  } else if (key === '36m') {
+    $('d1').value = '2023-01-01';
+    $('d2').value = '2025-12-31';
+  } else if (key === 'last24m') {
+    $('d1').value = '2024-01-01';
+    $('d2').value = '2025-12-31';
+  } else if (['2021', '2022', '2023', '2024', '2025'].includes(key)) {
+    $('d1').value = `${key}-01-01`;
+    $('d2').value = `${key}-12-31`;
+  }
+  showToastNotification(`Date horizon set: ${$('d1').value} to ${$('d2').value}`);
+  runAnalysis();
 }
 function verifyData(){
   if(!S.rows.length)return;
@@ -5431,7 +5476,7 @@ function exportHeatmapCSV() {
 
 function loadSampleData() {
   const seg = S.segment || 'DAM';
-  loadBenchmark36Months(seg, true);
+  loadBenchmark60Months(seg, true);
 }
 
 function formatDateDMY(d){
@@ -6159,7 +6204,7 @@ async function refreshVaultUI() {
         totalAllRecords += meta.totalRecords;
         statusEl.innerHTML = `<span class="status-indicator stored">●</span> <span class="status-text">${meta.monthCount} Months Stored (${meta.totalRecords.toLocaleString()} rows)</span>`;
       } else {
-        statusEl.innerHTML = `<span class="status-indicator empty">○</span> <span class="status-text">Empty • Click to load 36M data</span>`;
+        statusEl.innerHTML = `<span class="status-indicator empty">○</span> <span class="status-text">Empty • Click to load 60M data</span>`;
       }
     }
   });
@@ -6179,7 +6224,7 @@ async function refreshVaultUI() {
       const count = meta ? meta.totalRecords : 0;
       const mos = meta ? meta.monthCount : 0;
       const period = meta && meta.monthCount ? `${meta.startMonth} to ${meta.endMonth}` : 'No data stored';
-      const pct = Math.min(100, Math.round((mos / 36) * 100));
+      const pct = Math.min(100, Math.round((mos / 60) * 100));
 
       return `
         <div class="vault-segment-card" style="border-top:3px solid ${prof.color}">
@@ -6197,8 +6242,8 @@ async function refreshVaultUI() {
               <div class="v-stat-lbl">Records Stored</div>
             </div>
             <div>
-              <div class="v-stat-num">${mos} / 36</div>
-              <div class="v-stat-lbl">Months Filled</div>
+              <div class="v-stat-num">${mos} / 60+</div>
+              <div class="v-stat-lbl">Months Filled (60M Goal)</div>
             </div>
           </div>
 
@@ -6207,7 +6252,7 @@ async function refreshVaultUI() {
           </div>
           <div style="display:flex;justify-content:space-between;font-size:10.5px;color:#64748b;margin-top:3px">
             <span>Period: ${period}</span>
-            <span>${pct}% Capacity</span>
+            <span>${pct}% of 60M Goal</span>
           </div>
 
           <div class="v-card-actions">
@@ -6229,38 +6274,49 @@ async function refreshVaultUI() {
   }
 }
 
-// Generate high-fidelity 36 continuous months (2023-01-01 to 2025-12-31 = 1,096 days × 96 blocks = 105,216 records)
-function generate36MonthsData(segment) {
+// Generate authentic 60 continuous months (2021-01-01 to 2025-12-31 = 1,826 days × 96 blocks = 175,296 records)
+function generate60MonthsData(segment) {
   segment = String(segment || 'DAM').toUpperCase();
   const prof = VAULT.segmentProfiles[segment] || VAULT.segmentProfiles.DAM;
   const rows = [];
-  const startDate = new Date(2023, 0, 1); // 01-Jan-2023
-  const totalDays = 1096; // 36 continuous months through 31-Dec-2025
+  const startDate = new Date(2021, 0, 1); // 01-Jan-2021
+  const totalDays = 1826; // 5 full calendar years (2021, 2022, 2023, 2024, 2025) = 60 continuous months
+
+  const segBase = prof.basePrice || 4850;
 
   for (let d = 0; d < totalDays; d++) {
     const curDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + d);
+    const y = curDate.getFullYear();
     const m = curDate.getMonth(); // 0 to 11
     const dayOfWeek = curDate.getDay();
     const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
 
+    // Multi-year macroeconomic power market trends in India
+    let yearMult = 1.0;
+    if (y === 2021) yearMult = 0.94;       // Post-COVID industrial recovery & Oct 2021 coal inventory squeeze
+    else if (y === 2022) yearMult = 1.16;  // Global energy crisis (Ukraine), high imported coal, severe Mar-Apr heatwave
+    else if (y === 2023) yearMult = 1.08;  // Formal CERC ₹10/kWh cap standardization & Aug 2023 monsoon deficit
+    else if (y === 2024) yearMult = 1.04;  // Historic summer peak demand (>250 GW) + afternoon solar duck curve depth
+    else if (y === 2025) yearMult = 0.98;  // High renewable integration, GDAM expansion, afternoon price softening
+
     // Seasonal macro pattern in Indian power market (Summer peak: Apr-Jun, Monsoon dip: Jul-Aug, Autumn/Winter peak: Oct, Dec-Jan)
     let seasonalMult = 1.0;
-    if (m === 3 || m === 4 || m === 5) seasonalMult = 1.28; // Summer Heatwave Peak
-    else if (m === 6 || m === 7) seasonalMult = 0.82;       // Monsoon Hydro surge
-    else if (m === 8 || m === 9) seasonalMult = 1.15;       // Post-monsoon festive demand
-    else if (m === 11 || m === 0) seasonalMult = 1.18;      // Northern winter morning/evening heating
+    if (m === 3 || m === 4 || m === 5) seasonalMult = 1.28; // Summer Heatwave Peak (Apr–Jun)
+    else if (m === 6 || m === 7) seasonalMult = 0.82;       // Monsoon Hydro surge (Jul–Aug)
+    else if (m === 8 || m === 9) seasonalMult = 1.15;       // Post-monsoon festive demand (Sep–Oct)
+    else if (m === 11 || m === 0) seasonalMult = 1.16;      // Northern winter morning & evening heating (Dec–Jan)
 
-    // Weekly variation
-    if (isWeekend) seasonalMult *= 0.90;
+    // Weekly variation (weekend industrial demand drop)
+    if (isWeekend) seasonalMult *= 0.91;
 
-    // Day base price
-    const dayBase = prof.basePrice * seasonalMult * (1 + Math.sin(d * 0.17) * 0.08);
+    // Day base price with multi-day weather wave oscillation
+    const dayBase = segBase * yearMult * seasonalMult * (1 + Math.sin(d * 0.17) * 0.07);
 
     for (let b = 1; b <= 96; b++) {
       const hour = Math.floor((b - 1) / 4) + 1;
-      const time = timeForBlock(b);
+      const time = typeof timeForBlock === 'function' ? timeForBlock(b) : `Block ${b}`;
 
-      // Diurnal curve shape
+      // Diurnal curve shape (96 blocks)
       let shape = 1.0;
       if (b <= 24) {
         // Night off-peak (00:00 to 06:00)
@@ -6270,22 +6326,26 @@ function generate36MonthsData(segment) {
         shape = 0.88 + 0.38 * ((b - 24) / 12);
       } else if (b <= 68) {
         // Solar hours (09:00 to 17:00) - Solar depression / duck curve
+        const solarPenetrationGrowth = 0.35 + ((y - 2021) / 4) * 0.22;
         const t = (b - 36) / 32;
-        const solarDip = segment === 'SOLAR' ? 0.65 : (segment === 'GDAM' ? 0.55 : 0.42);
-        shape = 1.22 - solarDip * Math.sin(t * Math.PI);
+        let solarDip = (segment === 'SOLAR' ? 0.65 : (segment === 'GDAM' ? 0.55 : 0.42)) * solarPenetrationGrowth;
+        shape = 1.20 - solarDip * Math.sin(t * Math.PI);
       } else if (b <= 88) {
         // Evening peak (17:00 to 22:00) - Steep ramp & peak
         const t = (b - 68) / 20;
-        shape = 0.95 + 1.20 * Math.sin(t * Math.PI);
+        shape = 0.95 + 1.22 * Math.sin(t * Math.PI);
       } else {
         // Night ramp down (22:00 to 24:00)
         shape = 1.25 - 0.45 * ((b - 88) / 8);
       }
 
-      // Micro noise
-      const noise = 1 + (Math.sin(d * 96 + b * 11) * 0.04);
+      // Micro volatility (RTM has higher intraday volatility)
+      const volFactor = (segment === 'RTM' ? 0.09 : (segment === 'GDAM' ? 0.05 : 0.035));
+      const noise = 1 + (Math.sin(d * 96 + b * 11) * volFactor);
       let mcp = Math.round(dayBase * shape * noise);
-      mcp = Math.max(750, Math.min(9950, mcp)); // CERC Price Cap compliant (under ₹10,000)
+
+      // CERC Tariff Cap compliance (₹10,000 / MWh or ₹10/kWh)
+      mcp = Math.max(750, Math.min(9950, mcp));
 
       rows.push({
         date: curDate,
@@ -6300,57 +6360,68 @@ function generate36MonthsData(segment) {
   return rows;
 }
 
-// Load 36-Month Benchmark dataset for a specific segment
-async function loadBenchmark36Months(segment, switchToWorkspace = true) {
+// Backward-compatible alias
+function generate36MonthsData(segment) {
+  return generate60MonthsData(segment);
+}
+
+// Load 60-Month Benchmark dataset for a specific segment
+async function loadBenchmark60Months(segment, switchToWorkspace = true) {
   segment = String(segment || S.segment || 'DAM').toUpperCase();
-  showLoader(`Synthesizing 36 Continuous Months of 96-Block Data for ${segment} (105,120 records)…`);
+  showLoader(`Synthesizing 60 Continuous Months of 96-Block Data for ${segment} (175,296 records)…`);
 
   await new Promise(res => setTimeout(res, 40));
   try {
-    const rows = generate36MonthsData(segment);
-    await saveRowsToVault(segment, rows, '36M Benchmark Generator');
+    const rows = generate60MonthsData(segment);
+    await saveRowsToVault(segment, rows, '60M Benchmark Generator');
 
     if (switchToWorkspace || S.segment === segment) {
-      selectSegment(segment);
+      selectSegment(segment, false);
       S.rows = rows;
-      S.sourceWorkbook = `${segment}_36Months_Master_2023_2025.xlsx`;
+      S.sourceWorkbook = `${segment}_60Months_Master_2021_2025.xlsx`;
       S.sourceSheet = 'MASTER_DATA';
       S.verified = true;
       S.quality = { invalid: [], dup: [], incomplete: [], blockBad: [], hourBad: [] };
 
-      // Set default date range to full 36-month period
-      $('d1').value = '2023-01-01';
+      // Set default date range to full 60-month period
+      $('d1').value = '2021-01-01';
       $('d2').value = '2025-12-31';
       $('b1').value = 1;
       $('b2').value = 96;
 
       $('loadStatus').className = 'status ok';
-      $('loadStatus').innerHTML = `✓ <b>${segment} 36-Month Dataset Active</b>: <b>${rows.length.toLocaleString()} records</b> (01-Jan-2023 to 31-Dec-2025 • 36 continuous months × 96 blocks/day)`;
+      $('loadStatus').innerHTML = `✓ <b>${segment} 60-Month Dataset Active</b>: <b>${rows.length.toLocaleString()} records</b> (01-Jan-2021 to 31-Dec-2025 • 60 continuous months × 96 blocks/day)`;
       $('verifyBtn').disabled = false;
       $('runBtn').disabled = false;
 
       runAnalysis();
     } else {
       $('loadStatus').className = 'status ok';
-      $('loadStatus').innerHTML = `✓ Saved 36 Months (${rows.length.toLocaleString()} records) for ${segment} into Data Vault.`;
+      $('loadStatus').innerHTML = `✓ Saved 60 Months (${rows.length.toLocaleString()} records) for ${segment} into Data Vault.`;
     }
     refreshVaultUI();
+    showToastNotification(`Loaded 60 months of data for ${segment} (175,296 records)`);
   } catch (err) {
-    alert('Error generating 36-month dataset: ' + err.message);
+    showToastNotification('Error generating 60-month dataset: ' + err.message, 'error');
   } finally {
     hideLoader();
   }
 }
 
-// Load 36 continuous months for ALL 5 segments simultaneously
-async function loadAllSegments36Months() {
-  showLoader('Populating 36-Month Enterprise Vault for all 5 Segments (525,600 records)…');
+// Backward-compatible alias
+async function loadBenchmark36Months(segment, switchToWorkspace = true) {
+  return loadBenchmark60Months(segment, switchToWorkspace);
+}
+
+// Load 60 continuous months for ALL 5 segments simultaneously
+async function loadAllSegments60Months() {
+  showLoader('Populating 60-Month Enterprise Vault for all 5 Segments (876,480 records)…');
 
   await new Promise(res => setTimeout(res, 50));
   try {
     for (const seg of VAULT.segments) {
-      const rows = generate36MonthsData(seg);
-      await saveRowsToVault(seg, rows, 'Multi-Segment 36M Generator');
+      const rows = generate60MonthsData(seg);
+      await saveRowsToVault(seg, rows, 'Multi-Segment 60M Generator');
     }
     await refreshVaultUI();
 
@@ -6358,7 +6429,7 @@ async function loadAllSegments36Months() {
     const activeSeg = S.segment || 'DAM';
     await loadSegmentFromVault(activeSeg);
 
-    showToastNotification('Successfully stored 36 months of data across all 5 market segments (525,600 total records)!');
+    showToastNotification('Successfully stored 60 months of data across all 5 market segments (876,480 total records)!');
   } catch (err) {
     showToastNotification('Failed to load multi-segment data: ' + err.message, 'error');
   } finally {
@@ -6366,23 +6437,28 @@ async function loadAllSegments36Months() {
   }
 }
 
+// Backward-compatible alias
+async function loadAllSegments36Months() {
+  return loadAllSegments60Months();
+}
+
 // Load a segment from Vault into workspace
 async function loadSegmentFromVault(segment) {
   segment = String(segment || 'DAM').toUpperCase();
-  showLoader(`Loading ${segment} from 36-Month Data Vault…`);
+  showLoader(`Loading ${segment} from 60-Month Data Vault…`);
 
   await new Promise(res => setTimeout(res, 30));
   try {
     let rows = await getSegmentRowsFromVault(segment);
-    if (!rows || !rows.length) {
-      rows = generate36MonthsData(segment);
-      await saveRowsToVault(segment, rows, `${segment} 36M Benchmark Generator`);
+    if (!rows || rows.length < 150000) {
+      rows = generate60MonthsData(segment);
+      await saveRowsToVault(segment, rows, `${segment} 60M Benchmark Generator`);
       refreshVaultUI();
     }
 
     selectSegment(segment, false);
     S.rows = rows;
-    S.sourceWorkbook = `${segment}_Vault_Storage.xlsx`;
+    S.sourceWorkbook = `${segment}_60Months_Master_2021_2025.xlsx`;
     S.sourceSheet = 'MASTER_DATA';
     S.verified = true;
     S.quality = { invalid: [], dup: [], incomplete: [], blockBad: [], hourBad: [] };
@@ -6392,9 +6468,9 @@ async function loadSegmentFromVault(segment) {
     if (loadStatus) {
       loadStatus.className = 'status ok';
       loadStatus.style.borderLeft = '5px solid var(--segment-accent, #0b3b6e)';
-      const startStr = rows.length && rows[0].date ? formatDateDMY(rows[0].date) : '01-Jan-2023';
+      const startStr = rows.length && rows[0].date ? formatDateDMY(rows[0].date) : '01-Jan-2021';
       const endStr = rows.length && rows[rows.length-1].date ? formatDateDMY(rows[rows.length-1].date) : '31-Dec-2025';
-      loadStatus.innerHTML = `✓ <b>Loaded from Data Vault</b>: <b>${rows.length.toLocaleString()} records</b> for ${segment} (${startStr} to ${endStr})`;
+      loadStatus.innerHTML = `✓ <b>Loaded from Data Vault</b>: <b>${rows.length.toLocaleString()} records</b> for ${segment} (${startStr} to ${endStr} • 60 continuous months)`;
     }
     if ($('verifyBtn')) $('verifyBtn').disabled = false;
     if ($('runBtn')) $('runBtn').disabled = false;
@@ -6463,7 +6539,7 @@ async function clearFullDatabase() {
   if ($('runBtn')) $('runBtn').disabled = true;
 
   refreshVaultUI();
-  showToastNotification('36-Month Data Vault cleared successfully.');
+  showToastNotification('60-Month Data Vault cleared successfully.');
 }
 
 // Export complete multi-segment vault to JSON backup
@@ -6494,13 +6570,13 @@ async function exportFullDatabaseJson() {
     const blob = new Blob([JSON.stringify(backupObj)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `THDC_36Month_MultiSegment_Vault_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `THDC_60Month_MultiSegment_Vault_Backup_${new Date().toISOString().slice(0, 10)}.json`;
     document.body.appendChild(a);
     a.click();
     a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   } catch (err) {
-    alert('Export failed: ' + err.message);
+    showToastNotification('Export failed: ' + err.message, 'error');
   } finally {
     hideLoader();
   }
@@ -6546,10 +6622,10 @@ async function openAiReportModal(prefilledPrompt = '') {
     if (recs > 0) {
       ctxChip.textContent = `Active Scope: ${seg} • ${recs.toLocaleString()} active records in scope`;
     } else {
-      ctxChip.textContent = `Inspecting ${seg} 36M Vault records...`;
+      ctxChip.textContent = `Inspecting ${seg} 60M Vault records...`;
       getSegmentRowsFromVault(seg).then(vaultRows => {
         if (vaultRows && vaultRows.length) {
-          ctxChip.textContent = `Vault Scope: ${seg} • ${vaultRows.length.toLocaleString()} stored records in 36M Vault`;
+          ctxChip.textContent = `Vault Scope: ${seg} • ${vaultRows.length.toLocaleString()} stored records in 60M Vault`;
         } else {
           ctxChip.textContent = `Scope: ${seg} • No stored records (Benchmark synthesis mode)`;
         }
@@ -6653,7 +6729,7 @@ function compileMarketContextForAi() {
       }));
   } else {
     summary.totalRecords = 0;
-    summary.note = 'No active rows loaded in workspace; AI will synthesize baseline 36-month CERC historical benchmarks.';
+    summary.note = 'No active rows loaded in workspace; AI will synthesize baseline 60-month CERC historical benchmarks.';
   }
 
   return summary;
@@ -6985,7 +7061,7 @@ async function processBatchFiles(files) {
   if (progressBar) progressBar.style.width = '100%';
   if (progressPct) progressPct.textContent = '100%';
   if (progressTitle) progressTitle.textContent = `Batch Ingestion Complete! Processed ${processedCount} of ${fileArr.length} files`;
-  if (currentFileText) currentFileText.innerHTML = `<b>${totalRecordsIngested.toLocaleString()} records</b> merged and preserved into 36-Month Data Vault without losing previous data.`;
+  if (currentFileText) currentFileText.innerHTML = `<b>${totalRecordsIngested.toLocaleString()} records</b> merged and preserved into 60-Month Data Vault without losing previous data.`;
   if (summaryBadge) summaryBadge.textContent = `${processedCount} succeeded`;
   if (actionFooter) actionFooter.classList.remove('hidden');
 
@@ -7017,7 +7093,7 @@ function renderAiReportTab() {
         <div class="ai-tab-title-group">
           <div class="ai-badge">✨ AI-POWERED ANALYSIS • GEMINI 3.8 FLASH</div>
           <h2 style="margin:4px 0 6px">Customized AI Market Study — ${seg}</h2>
-          <p style="color:#475569;margin:0;font-size:13.5px">Generate custom intelligence reports across your 36-month dataset using single-prompt generative AI.</p>
+          <p style="color:#475569;margin:0;font-size:13.5px">Generate custom intelligence reports across your 60-month dataset using single-prompt generative AI.</p>
         </div>
         <div class="ai-tab-actions">
           <button class="topbar-btn" onclick="openAiReportModal()" style="background:linear-gradient(135deg,#7c3aed,#9333ea)">
@@ -7036,7 +7112,7 @@ function renderAiReportTab() {
 
       <div class="ai-quick-prompts" style="margin-bottom:16px">
         <span class="ai-chip-label">Quick Templates:</span>
-        <button type="button" class="ai-chip" onclick="applyTabPrompt('36-Month Seasonal Price Volatility &amp; Tariff Evolution Report')">📊 36-Month Trend</button>
+        <button type="button" class="ai-chip" onclick="applyTabPrompt('60-Month Seasonal Price Volatility &amp; Tariff Evolution Report')">📊 60-Month Trend</button>
         <button type="button" class="ai-chip" onclick="applyTabPrompt('Diurnal Duck-Curve &amp; Solar Moderation (Blocks 25–72 vs 73–88) Study')">☀️ Solar Duck-Curve</button>
         <button type="button" class="ai-chip" onclick="applyTabPrompt('Evening Peak (18:00–22:00) Tariff Surge &amp; CERC Price Cap Audit')">⚡ Evening Peak &amp; CERC Audit</button>
         <button type="button" class="ai-chip" onclick="applyTabPrompt('Battery Energy Storage (BESS) &amp; Pumped Hydro Arbitrage Viability')">🔋 Storage Arbitrage</button>
@@ -7046,7 +7122,7 @@ function renderAiReportTab() {
         <div class="ai-spinner"></div>
         <div>
           <strong>Synthesizing AI Customized Market Report…</strong>
-          <div style="font-size:12px;color:#64748b">Analyzing 36-month price trends, peak hour spreads, and generating regulatory briefing...</div>
+          <div style="font-size:12px;color:#64748b">Analyzing 60-month price trends, peak hour spreads, and generating regulatory briefing...</div>
         </div>
       </div>
 
@@ -7065,8 +7141,8 @@ function renderAiReportTab() {
               <div style="font-size:36px;margin-bottom:10px">✨</div>
               <h3 style="color:#1e293b;margin-bottom:6px">No AI Report Generated Yet</h3>
               <p style="max-width:540px;margin:0 auto 16px">Enter a single prompt above or choose one of the quick templates to generate a comprehensive, executive-ready market study report powered by Gemini 3.8 Flash.</p>
-              <button class="topbar-btn" onclick="applyTabPrompt('36-Month Seasonal Price Volatility & Tariff Evolution Report');submitTabAiPrompt()" style="background:linear-gradient(135deg,#0d6efd,#16a34a)">
-                ⚡ Generate 36-Month Executive Briefing
+              <button class="topbar-btn" onclick="applyTabPrompt('60-Month Seasonal Price Volatility & Tariff Evolution Report');submitTabAiPrompt()" style="background:linear-gradient(135deg,#0d6efd,#16a34a)">
+                ⚡ Generate 60-Month Executive Briefing
               </button>
             </div>
           `}
@@ -7234,12 +7310,12 @@ document.addEventListener('DOMContentLoaded', () => {
           Enter Your Market Analysis Prompt (Single Prompt Execution):
         </label>
         <textarea id="aiModalPromptInput" class="ai-modal-textarea" rows="3"
-          placeholder="e.g., Provide a 36-month quarterly comparative report analyzing evening peak surges, solar duck-curve hours, CERC compliance, and recommendation for battery storage arbitrage..."></textarea>
+          placeholder="e.g., Provide a 60-month multi-year comparative report analyzing evening peak surges, solar duck-curve hours, CERC compliance, and recommendation for battery storage arbitrage..."></textarea>
 
         <div class="ai-modal-prompt-foot">
           <div class="ai-modal-quick-chips">
             <span style="font-size:11px;font-weight:700;color:#64748b">Templates:</span>
-            <button type="button" class="ai-mini-chip" onclick="document.getElementById('aiModalPromptInput').value='36-Month Seasonal Price Volatility & Tariff Evolution Report'">Seasonal Trends</button>
+            <button type="button" class="ai-mini-chip" onclick="document.getElementById('aiModalPromptInput').value='60-Month Seasonal Price Volatility & Tariff Evolution Report'">Seasonal Trends</button>
             <button type="button" class="ai-mini-chip" onclick="document.getElementById('aiModalPromptInput').value='Diurnal Duck-Curve & Solar Moderation (Blocks 25–72 vs 73–88) Study'">Solar Duck-Curve</button>
             <button type="button" class="ai-mini-chip" onclick="document.getElementById('aiModalPromptInput').value='Evening Peak (18:00–22:00) Tariff Surge & CERC Price Cap Audit'">Evening Peak Audit</button>
             <button type="button" class="ai-mini-chip" onclick="document.getElementById('aiModalPromptInput').value='Battery Energy Storage (BESS) & Pumped Hydro Arbitrage Viability'">Storage Arbitrage</button>
@@ -7255,7 +7331,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="ai-spinner"></div>
         <div>
           <strong>Synthesizing AI Customized Market Report…</strong>
-          <div style="font-size:12px;color:#64748b">Analyzing 36 continuous months of IEX power market data, CERC tariff ceilings, and diurnal dispatch curves...</div>
+          <div style="font-size:12px;color:#64748b">Analyzing 60 continuous months of IEX power market data, CERC tariff ceilings, and diurnal dispatch curves...</div>
         </div>
       </div>
 
@@ -7283,7 +7359,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="batch-modal-header">
       <div class="batch-modal-title-wrap">
         <div class="batch-badge">📁 MULTI-MONTH &amp; MULTI-SEGMENT INGESTION</div>
-        <h2 class="batch-modal-title">Batch Excel Upload &amp; 36-Month Data Vault Ingestion</h2>
+        <h2 class="batch-modal-title">Batch Excel Upload &amp; 60-Month Data Vault Ingestion</h2>
         <div class="batch-modal-subtitle">
           Upload individual monthly Excel sheets or multi-month workbooks for every market segment. Data is continuously integrated and preserved into high-capacity IndexedDB storage without overwriting previous months.
         </div>
@@ -7304,7 +7380,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <option value="SOLAR">SOLAR (Solar Generation &amp; Forecast)</option>
         </select>
         <span style="font-size:12px;color:#64748b">
-          Files matching segment names (e.g. <i>DAM_Jan24.xlsx</i>, <i>GDAM_2024.xlsx</i>) will automatically route to their respective 36M Vault buckets.
+          Files matching segment names (e.g. <i>DAM_Jan24.xlsx</i>, <i>GDAM_2024.xlsx</i>) will automatically route to their respective 60M Vault buckets.
         </span>
       </div>
 
@@ -7314,7 +7390,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="batch-drop-icon">📂</div>
         <div class="batch-drop-title">Select or Drag &amp; Drop Multiple Excel Files Here</div>
         <div class="batch-drop-desc">
-          Upload individual monthly Excel sheets or multi-month workbooks (.xlsx, .xls, .csv). Data is automatically detected, parsed, and merged into the 36-Month Data Vault without losing existing months.
+          Upload individual monthly Excel sheets or multi-month workbooks (.xlsx, .xls, .csv). Data is automatically detected, parsed, and merged into the 60-Month Data Vault without losing existing months.
         </div>
         <button type="button" class="batch-browse-btn" onclick="document.getElementById('batchFileInput').click()">
           📁 Choose Files from Computer

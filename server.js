@@ -64,7 +64,7 @@ app.post('/api/ai/custom-report', async (req, res) => {
     const rawContext = body.context || body.dataSummary || {};
     const segment = body.segment || rawContext.segment || 'DAM';
     const studyName = rawContext.studyName || `${segment} Market Study`;
-    const dateRange = rawContext.dateRange || (rawContext.startDate && rawContext.endDate ? `${rawContext.startDate} to ${rawContext.endDate}` : '36 Continuous Months');
+    const dateRange = rawContext.dateRange || (rawContext.startDate && rawContext.endDate ? `${rawContext.startDate} to ${rawContext.endDate}` : '60 Continuous Months (2021–2025)');
     const totalRecords = Number(rawContext.totalRecords || rawContext.totalAnalyzedBlocks || 0);
 
     const avgMcp = Number(rawContext.avgMcp || rawContext.kpis?.avg || 0);
@@ -125,7 +125,7 @@ Portal Verified Market Data Context:
 - Market Segment: ${segment}
 - Study Demarcation: ${studyName}
 - Scope / Date Range: ${dateRange}
-- Total Records Analyzed: ${totalRecords > 0 ? totalRecords.toLocaleString() : '59,136+'} 15-minute trading blocks
+- Total Records Analyzed: ${totalRecords > 0 ? totalRecords.toLocaleString() : '175,296+'} 15-minute trading blocks
 - Overall Average MCP: ₹${avgMcp.toFixed(2)} / MWh (₹${(avgMcp / 1000).toFixed(3)} / kWh)
 - Maximum Peak MCP: ₹${maxMcp.toFixed(2)} / MWh (₹${(maxMcp / 1000).toFixed(3)} / kWh)
 - Minimum Base MCP: ₹${minMcp.toFixed(2)} / MWh
@@ -189,8 +189,8 @@ Produce the comprehensive executive report in clean Markdown.`;
       prompt: req.body?.prompt || 'Executive Market Intelligence Analysis',
       segment: req.body?.segment || 'DAM',
       studyName: 'Power Market Study',
-      dateRange: '36-Month Unified Horizon',
-      totalRecords: 59136,
+      dateRange: '60-Month Continuous Horizon (2021–2025)',
+      totalRecords: 175296,
       avgMcp: 4850,
       maxMcp: 10000,
       minMcp: 1200,
@@ -214,7 +214,7 @@ Produce the comprehensive executive report in clean Markdown.`;
 // Domain Expert Algorithmic Report Generator
 function generateSynthesizedThdcReport(ctx) {
   const seg = ctx.segment || 'DAM';
-  const recs = ctx.totalRecords > 0 ? ctx.totalRecords.toLocaleString() : '59,136+';
+  const recs = ctx.totalRecords > 0 ? ctx.totalRecords.toLocaleString() : '175,296+';
   const avgRs = (ctx.avgMcp || 4850).toFixed(2);
   const avgKwh = ((ctx.avgMcp || 4850) / 1000).toFixed(3);
   const maxRs = (ctx.maxMcp || 10000).toFixed(2);
@@ -227,7 +227,7 @@ function generateSynthesizedThdcReport(ctx) {
 
   return `# Executive Market Intelligence Report: ${seg} Power Dynamics
 **Prepared for**: THDC India Limited — Commercial & Energy Economics Directorate  
-**Study Horizon**: ${ctx.dateRange || '36 Continuous Months'} • **Dataset**: ${recs} 15-Minute Trading Blocks  
+**Study Horizon**: ${ctx.dateRange || '60 Continuous Months (2021–2025)'} • **Dataset**: ${recs} 15-Minute Trading Blocks  
 **Inquiry Focus**: "${ctx.prompt}"
 
 ---
