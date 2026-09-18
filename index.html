@@ -2874,6 +2874,9 @@ body.layout-transposed-sidebar .wrap{
     </div>
 
     <div class="topbar-status-strip">
+      <div class="auth-container" style="margin-right: 12px;">
+        <button id="authBtn" class="topbar-action-btn" style="background:#10b981; color:white; border:none; padding: 6px 12px; border-radius: 4px; font-weight:bold; cursor:pointer;">Sign In</button>
+      </div>
       <div class="topbar-center-pill">
         <div id="segBadge" class="badge segment-badge"><span class="seg-dot"></span>Segment: Not Selected</div>
         <select id="topbarSegmentSelect" class="topbar-seg-select" onchange="selectSegment(this.value)" title="Quickly Switch Active Market Segment">
@@ -3277,6 +3280,7 @@ body.layout-transposed-sidebar .wrap{
             </div>
             <label class="metric-option"><input type="checkbox" class="metric-check" value="selectedBlocks" checked onchange="updateMetricSummary()"><span>Selected Blocks</span><b class="metric-order-badge"></b></label>
             <label class="metric-option"><input type="checkbox" class="metric-check" value="avg" checked onchange="updateMetricSummary()"><span>Selected Average MCP ₹/MWh</span><b class="metric-order-badge"></b></label>
+            <label class="metric-option"><input type="checkbox" class="metric-check" value="weightedAvg" checked onchange="updateMetricSummary()"><span>Weighted Avg (Volume) ₹/MWh</span><b class="metric-order-badge"></b></label>
             <label class="metric-option"><input type="checkbox" class="metric-check" value="max" checked onchange="updateMetricSummary()"><span>Maximum MCP ₹/MWh</span><b class="metric-order-badge"></b></label>
             <label class="metric-option"><input type="checkbox" class="metric-check" value="min" checked onchange="updateMetricSummary()"><span>Minimum MCP ₹/MWh</span><b class="metric-order-badge"></b></label>
             <label class="metric-option"><input type="checkbox" class="metric-check" value="maxDate" checked onchange="updateMetricSummary()"><span>Max MCP Date</span><b class="metric-order-badge"></b></label>
@@ -3598,8 +3602,9 @@ function findHeaderRowAndIndexes(all){
     const time=headerIndex(r,['Time Block','Time Block 15 Min','Time Block 15_Min','Time','From Time _ To Time','Time Interval','Interval','Slot Time']);
     const mcp=headerIndex(r,['MCP Rs_MWh','MCP Rs_MWh *','MCP ₹_MWh','MCP RsMWh','MCP','Market Clearing Price','Price Rs_MWh','Price ₹_MWh','Price','MCP_Rs_MWh']);
     const selected=headerIndex(r,['Selected','Selected?','Selected Block','Selection']);
+    const volume=headerIndex(r,['MCV','Volume','Final Scheduled Volume','Final Scheduled Vol','Scheduled Volume','Scheduled Vol','Volume MW','Volume MWh','Total Volume','Total Vol','Market Clearing Volume','MCV MW','MCV MWh']);
     if(date>=0 && mcp>=0 && (block>=0 || time>=0)){
-      return {row:i,date,block,time,mcp,hour:headerIndex(r,['Hour']),selected};
+      return {row:i,date,block,time,mcp,volume,hour:headerIndex(r,['Hour']),selected};
     }
   }
   return null;
@@ -3671,6 +3676,12 @@ async function importFile(e){
       const raw = x[meta.mcp];
       const mcpBlank = raw === null || raw === undefined || String(raw).trim() === '';
       const mcp = mcpBlank ? null : num(raw);
+          const volumeRaw = meta.volume >= 0 ? x[meta.volume] : null;
+          const volumeBlank = volumeRaw === null || volumeRaw === undefined || String(volumeRaw).trim() === '';
+          const volume = volumeBlank ? null : num(volumeRaw);
+      const volumeRaw = meta.volume >= 0 ? x[meta.volume] : null;
+      const volumeBlank = volumeRaw === null || volumeRaw === undefined || String(volumeRaw).trim() === '';
+      const volume = volumeBlank ? null : num(volumeRaw);
       const selected = meta.selected >= 0 ? String(x[meta.selected] ?? '').trim().toUpperCase() === 'YES' : null;
       const invalidMcp = !mcpBlank && mcp === null;
 
@@ -3683,7 +3694,7 @@ async function importFile(e){
       });
 
       S.rows.push({
-        date: d, hour, block, time, mcp, mcpBlank, invalidMcp,
+        date: d, hour, block, time, mcp, volume, mcpBlank, invalidMcp, volume,
         sourceRow: i + 1, sourceSheet: sheetName, selected
       });
     }
@@ -4289,7 +4300,16 @@ function runAnalysisInner(){
     if(!valid.length)throw new Error('No numeric MCP records found for the selected date/block range.');
     const vals=valid.map(r=>r.mcp), mx=Math.max(...vals), mn=Math.min(...vals);
     const blocks=uiBlocks;
-    S.results={blocks,d1,d2,inRange,valid,allSelectedCount:inRange.length,avg:avg(vals),max:mx,min:mn,median:median(vals),spread:mx-mn,
+    let sumProduct = 0;
+    let sumVolume = 0;
+    valid.forEach(r => {
+      const vol = (typeof r.volume === 'number' && !isNaN(r.volume)) ? r.volume : 1; // Fallback to unweighted if no vol
+      sumProduct += (r.mcp * vol);
+      sumVolume += vol;
+    });
+    const weightedAvg = sumVolume > 0 ? (sumProduct / sumVolume) : avg(vals);
+    
+    S.results={blocks,d1,d2,inRange,valid,allSelectedCount:inRange.length,avg:avg(vals), weightedAvg: weightedAvg, max:mx,min:mn,median:median(vals),spread:mx-mn,
       maxRows:valid.filter(r=>r.mcp===mx),minRows:valid.filter(r=>r.mcp===mn)};
     renderKPIs(); drawBlockChart(); $('results').classList.remove('hidden');
     $('excelBtn').disabled=false;$('pdfBtn').disabled=false;
@@ -5498,6 +5518,7 @@ function renderKPIs(){
     ['Selected Blocks',r.blocks.length+' / 96'],
     ['Selected Records',r.valid.length.toLocaleString()],
     ['Average MCP','₹ '+fmt(r.avg)+'/MWh'],
+    ['Weighted Avg (by Vol)','₹ '+fmt(r.weightedAvg)+'/MWh'],
     ['Maximum MCP','₹ '+fmt(r.max)+'/MWh'],
     ['Minimum MCP','₹ '+fmt(r.min)+'/MWh'],
     ['Median / Spread','₹ '+fmt(r.median)+' / ₹ '+fmt(r.spread)]
@@ -5505,8 +5526,22 @@ function renderKPIs(){
 }
 function groupRows(keyFn){
   const m=new Map();
-  for(const r of S.results.valid){const k=keyFn(r);if(!m.has(k))m.set(k,[]);m.get(k).push(r.mcp)}
-  return [...m.entries()].map(([k,v])=>({key:k,count:v.length,avg:avg(v),max:Math.max(...v),min:Math.min(...v),median:median(v),spread:Math.max(...v)-Math.min(...v)}));
+  for(const r of S.results.valid){
+    const k=keyFn(r);
+    if(!m.has(k))m.set(k,[]);
+    const vol = (typeof r.volume === 'number' && !isNaN(r.volume)) ? r.volume : 1;
+    m.get(k).push({ mcp: r.mcp, volume: vol });
+  }
+  return [...m.entries()].map(([k,v])=>{
+    const mcps = v.map(x => x.mcp);
+    let sumProduct = 0; let sumVol = 0;
+    v.forEach(x => { sumProduct += x.mcp * x.volume; sumVol += x.volume; });
+    const wAvg = sumVol > 0 ? (sumProduct / sumVol) : avg(mcps);
+    return {
+      key:k, count:v.length, avg:avg(mcps), weightedAvg: wAvg,
+      max:Math.max(...mcps), min:Math.min(...mcps), median:median(mcps), spread:Math.max(...mcps)-Math.min(...mcps)
+    };
+  });
 }
 function showTab(tab,el){
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
@@ -5535,22 +5570,32 @@ function showTab(tab,el){
   let html='';
   if(tab==='monthly'){
     const rows=groupRows(x=>{const d=x.date;return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')});
-    html=table(['S.No.','Month','Year','Selected Blocks','Record Count','Average MCP','Maximum MCP','Minimum MCP','Median','Price Spread'],rows.map((x,i)=>{const [y,m]=x.key.split('-');return [i+1,mName(+m),y,r.blocks.join(', '),x.count,fmt(x.avg),fmt(x.max),fmt(x.min),fmt(x.median),fmt(x.spread)]}));
+    html=table(['S.No.','Month','Year','Selected Blocks','Record Count','Average MCP','Weighted Avg (Vol)','Maximum MCP','Minimum MCP','Median','Price Spread'],rows.map((x,i)=>{const [y,m]=x.key.split('-');return [i+1,mName(+m),y,r.blocks.join(', '),x.count,fmt(x.avg),fmt(x.weightedAvg),fmt(x.max),fmt(x.min),fmt(x.median),fmt(x.spread)]}));
   } else if(tab==='weekly'){
     const rows=groupRows(x=>weekKey(x.date));
-    html=table(['S.No.','Week','Selected Blocks','Record Count','Average MCP','Maximum MCP','Minimum MCP','Median','Price Spread'],rows.map((x,i)=>[i+1,x.key,r.blocks.join(', '),x.count,fmt(x.avg),fmt(x.max),fmt(x.min),fmt(x.median),fmt(x.spread)]));
+    html=table(['S.No.','Week','Selected Blocks','Record Count','Average MCP','Weighted Avg (Vol)','Maximum MCP','Minimum MCP','Median','Price Spread'],rows.map((x,i)=>[i+1,x.key,r.blocks.join(', '),x.count,fmt(x.avg),fmt(x.weightedAvg),fmt(x.max),fmt(x.min),fmt(x.median),fmt(x.spread)]));
   } else if(tab==='yearly'){
     const rows=groupRows(x=>String(x.date.getFullYear()));
-    html=table(['S.No.','Year','Selected Blocks','Record Count','Average MCP','Maximum MCP','Minimum MCP','Median','Price Spread'],rows.map((x,i)=>[i+1,x.key,r.blocks.join(', '),x.count,fmt(x.avg),fmt(x.max),fmt(x.min),fmt(x.median),fmt(x.spread)]));
+    html=table(['S.No.','Year','Selected Blocks','Record Count','Average MCP','Weighted Avg (Vol)','Maximum MCP','Minimum MCP','Median','Price Spread'],rows.map((x,i)=>[i+1,x.key,r.blocks.join(', '),x.count,fmt(x.avg),fmt(x.weightedAvg),fmt(x.max),fmt(x.min),fmt(x.median),fmt(x.spread)]));
   } else if(tab==='daily'){
     const rows=groupRows(x=>iso(x.date));
-    html=table(['S.No.','Date','Selected Blocks','Record Count','Average MCP','Maximum MCP','Minimum MCP','Median','Price Spread'],rows.map((x,i)=>[i+1,x.key,r.blocks.join(', '),x.count,fmt(x.avg),fmt(x.max),fmt(x.min),fmt(x.median),fmt(x.spread)]));
+    html=table(['S.No.','Date','Selected Blocks','Record Count','Average MCP','Weighted Avg (Vol)','Maximum MCP','Minimum MCP','Median','Price Spread'],rows.map((x,i)=>[i+1,x.key,r.blocks.join(', '),x.count,fmt(x.avg),fmt(x.weightedAvg),fmt(x.max),fmt(x.min),fmt(x.median),fmt(x.spread)]));
   } else if(tab==='blocks96'){
     const m=new Map(); for(const b of Array.from({length:96},(_,i)=>i+1)){m.set(b,[])}
-    for(const x of r.inRange)if(typeof x.mcp==='number')m.get(x.block)?.push(x.mcp);
+    for(const x of r.inRange){
+      if(typeof x.mcp==='number'){
+        const vol = (typeof x.volume === 'number' && !isNaN(x.volume)) ? x.volume : 1;
+        m.get(x.block)?.push({mcp: x.mcp, volume: vol});
+      }
+    }
     const rows=[...m.entries()].map(([b,v])=>({b,v}));
-    html=table(['Block No.','Time Block','Hour','Selected?','Record Count','Average MCP','Maximum MCP','Minimum MCP','Median','Price Spread'],rows.map(x=>{
-      const b=x.b,v=x.v;return [b,timeForBlock(b),Math.floor((b-1)/4)+1,r.blocks.includes(b)?'YES':'NO',v.length,fmt(avg(v)),fmt(v.length?Math.max(...v):null),fmt(v.length?Math.min(...v):null),fmt(median(v)),fmt(v.length?Math.max(...v)-Math.min(...v):null)]
+    html=table(['Block No.','Time Block','Hour','Selected?','Record Count','Average MCP','Weighted Avg (Vol)','Maximum MCP','Minimum MCP','Median','Price Spread'],rows.map(x=>{
+      const b=x.b, v_objs=x.v;
+      const mcps = v_objs.map(o => o.mcp);
+      let sumProduct = 0; let sumVol = 0;
+      v_objs.forEach(o => { sumProduct += o.mcp * o.volume; sumVol += o.volume; });
+      const wAvg = sumVol > 0 ? (sumProduct / sumVol) : avg(mcps);
+      return [b,timeForBlock(b),Math.floor((b-1)/4)+1,r.blocks.includes(b)?'YES':'NO',v_objs.length,fmt(avg(mcps)),fmt(wAvg),fmt(v_objs.length?Math.max(...mcps):null),fmt(v_objs.length?Math.min(...mcps):null),fmt(median(mcps)),fmt(v_objs.length?Math.max(...mcps)-Math.min(...mcps):null)]
     }));
   } else if(tab==='extremes'){
     const mx=r.maxRows.map((x,i)=>[i+1,iso(x.date),x.hour,x.block,x.time,fmt(x.mcp)]);
@@ -5572,7 +5617,11 @@ function table(headers,rows){
 }
 function mName(m){return ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m]}
 function timeForBlock(b){const mins=(b-1)*15;const a=String(Math.floor(mins/60)).padStart(2,'0')+':'+String(mins%60).padStart(2,'0');const endMins=mins+15;const z=endMins===1440?'24:00':String(Math.floor(endMins/60)).padStart(2,'0')+':'+String(endMins%60).padStart(2,'0');return a+' - '+z}
-function clearSelection(){ $('customBlocks').value='';$('b1').value=1;$('b2').value=96; if(S.rows.length)setDateDefaults() }
+function clearSelection(){ 
+  if (confirm('Are you sure you want to reset your selection? Any active segment-specific analysis calculations, including growth tracking, will be reset.')) {
+    $('customBlocks').value='';$('b1').value=1;$('b2').value=96; if(S.rows.length)setDateDefaults();
+  }
+}
 
 function drawBlockChart(){
   const c=$('blockChart'),ctx=c.getContext('2d'),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);
@@ -5646,6 +5695,7 @@ function exportExcel(){
     ['Total Analyzed Records', r.valid.length],
     ['Core Financial Metric', 'Value (₹ / MWh)'],
     ['Average Market Clearing Price (MCP)', r.avg],
+    ['Weighted Average MCP (by Volume)', r.weightedAvg],
     ['Maximum Peak MCP', r.max],
     ['Minimum Base MCP', r.min],
     ['Median Clearing MCP', r.median],
@@ -5772,7 +5822,7 @@ function exportExcel(){
   for (const [name, rows] of periodicGroups) {
     const a = [
       ['Period', 'Record Count', 'Average MCP (₹/MWh)', 'Maximum MCP (₹/MWh)', 'Minimum MCP (₹/MWh)', 'Median MCP (₹/MWh)', 'Price Spread (₹/MWh)'],
-      ...rows.map(x => [x.key, x.count, x.avg, x.max, x.min, x.median, x.spread])
+      ...rows.map(x => [x.key, x.count, x.avg, x.weightedAvg, x.max, x.min, x.median, x.spread])
     ];
     const wsPeriod = XLSX.utils.aoa_to_sheet(a);
     wsPeriod['!cols'] = [{ wch: 16 }, { wch: 14 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 22 }];
@@ -5821,23 +5871,29 @@ function exportExcel(){
   }
 
   // 4. 96_BLOCKS SHEET
-  const b96 = [['Block No.', 'Time Block', 'Hour', 'Selected?', 'Record Count', 'Average MCP', 'Maximum MCP', 'Minimum MCP', 'Median', 'Price Spread']];
+  const b96 = [['Block No.', 'Time Block', 'Hour', 'Selected?', 'Record Count', 'Average MCP', 'Weighted Avg (Vol)', 'Maximum MCP', 'Minimum MCP', 'Median', 'Price Spread']];
   const blockValues = Array.from({ length: 97 }, () => []);
   for (const x of r.inRange) {
     if (x.block >= 1 && x.block <= 96 && typeof x.mcp === 'number' && Number.isFinite(x.mcp)) {
-      blockValues[x.block].push(x.mcp);
+      const vol = (typeof x.volume === 'number' && !isNaN(x.volume)) ? x.volume : 1;
+      blockValues[x.block].push({mcp: x.mcp, volume: vol});
     }
   }
   for (let b = 1; b <= 96; b++) {
-    const v = blockValues[b];
+    const v_objs = blockValues[b];
+    const mcps = v_objs.map(o => o.mcp);
+    let sumProduct = 0; let sumVol = 0;
+    v_objs.forEach(o => { sumProduct += o.mcp * o.volume; sumVol += o.volume; });
+    const wAvg = sumVol > 0 ? (sumProduct / sumVol) : avg(mcps);
+    
     b96.push([
       b, timeForBlock(b), Math.floor((b - 1) / 4) + 1,
       r.blocks.includes(b) ? 'YES' : 'NO',
-      v.length, avg(v),
-      v.length ? Math.max(...v) : null,
-      v.length ? Math.min(...v) : null,
-      median(v),
-      v.length ? Math.max(...v) - Math.min(...v) : null
+      v_objs.length, avg(mcps), wAvg,
+      v_objs.length ? Math.max(...mcps) : null,
+      v_objs.length ? Math.min(...mcps) : null,
+      median(mcps),
+      v_objs.length ? Math.max(...mcps) - Math.min(...mcps) : null
     ]);
   }
   const ws96 = XLSX.utils.aoa_to_sheet(b96);
@@ -6690,6 +6746,15 @@ function compileMarketContextForAi() {
     const mcps = rowsToAnalyze.map(x => x.mcp);
     summary.totalAnalyzedBlocks = rowsToAnalyze.length;
     summary.avgMcp = Math.round(avg(mcps));
+    
+    let sumProduct = 0; let sumVol = 0;
+    rowsToAnalyze.forEach(r => {
+      const vol = (typeof r.volume === 'number' && !isNaN(r.volume)) ? r.volume : 1;
+      sumProduct += (r.mcp * vol);
+      sumVol += vol;
+    });
+    summary.weightedAvgMcp = sumVol > 0 ? Math.round(sumProduct / sumVol) : summary.avgMcp;
+
     summary.minMcp = Math.min(...mcps);
     summary.maxMcp = Math.max(...mcps);
     summary.medianMcp = Math.round(median(mcps));
@@ -6973,6 +7038,9 @@ async function processBatchFiles(files) {
           const raw = x[meta.mcp];
           const mcpBlank = raw === null || raw === undefined || String(raw).trim() === '';
           const mcp = mcpBlank ? null : num(raw);
+          const volumeRaw = meta.volume >= 0 ? x[meta.volume] : null;
+          const volumeBlank = volumeRaw === null || volumeRaw === undefined || String(volumeRaw).trim() === '';
+          const volume = volumeBlank ? null : num(volumeRaw);
 
           // Auto-derive missing block or time
           if (block == null && time) {
@@ -6993,7 +7061,7 @@ async function processBatchFiles(files) {
           }
 
           fileRows.push({
-            date: d, hour, block, time, mcp
+            date: d, hour, block, time, mcp, volume
           });
         }
       }
@@ -7231,7 +7299,8 @@ function printAiReport() {
           <small>Generated by AI Engine • ${new Date().toLocaleDateString('en-GB')}</small>
         </div>
         ${content}
-      </body>
+      
+</body>
     </html>
   `);
   w.document.close();
@@ -7430,6 +7499,85 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
 </div>
-<script>document.addEventListener("DOMContentLoaded",()=>changeBlockMode());</script></body>
+<script>document.addEventListener("DOMContentLoaded",()=>changeBlockMode());</script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+  
+  const firebaseConfig = {
+  "projectId": "midyear-decoder-nj4jh",
+  "appId": "1:635125152385:web:4c3a8715c3c590a6b52b80",
+  "apiKey": "AIzaSyAWspl7xE-w76ICy8-YCuynV5pfyAmFwgA",
+  "authDomain": "midyear-decoder-nj4jh.firebaseapp.com",
+  "firestoreDatabaseId": "ai-studio-remixiexmarketan-ffa8fb51-411f-4383-bd62-dd951453a15e",
+  "storageBucket": "midyear-decoder-nj4jh.firebasestorage.app",
+  "messagingSenderId": "635125152385",
+  "measurementId": "",
+  "oAuthClientId": "635125152385-n2t8jr8t0f5ua4vkm803qhcfrt2e0eg4.apps.googleusercontent.com",
+  "recaptchaSiteKey": ""
+};
+  
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+  const auth = getAuth(app);
+  
+  window.firebaseAuth = auth;
+  window.firebaseDb = db;
+  
+  const provider = new GoogleAuthProvider();
+  
+  window.signInWithGoogle = () => {
+      signInWithPopup(auth, provider).catch(err => console.error(err));
+  };
+  
+  window.signOutUser = () => {
+      signOut(auth);
+  };
+  
+  onAuthStateChanged(auth, async (user) => {
+      window.handleFirestoreError = function(error, operationType, path) {
+        const errInfo = {
+          error: error instanceof Error ? error.message : String(error),
+          authInfo: {
+            userId: auth.currentUser?.uid,
+            email: auth.currentUser?.email,
+            emailVerified: auth.currentUser?.emailVerified
+          },
+          operationType,
+          path
+        };
+        console.error('Firestore Error: ', JSON.stringify(errInfo));
+      };
+
+      const authBtn = document.getElementById('authBtn');
+      if (authBtn) {
+          if (user) {
+              authBtn.innerHTML = '<span style="font-size:12px;margin-right:6px;">👤</span>' + user.displayName + ' (Sign Out)';
+              authBtn.onclick = window.signOutUser;
+              authBtn.classList.add('logged-in');
+              
+              const userRef = doc(db, 'users', user.uid);
+              try {
+                  const userSnap = await getDoc(userRef);
+                  if (!userSnap.exists()) {
+                      await setDoc(userRef, {
+                          email: user.email,
+                          createdAt: Date.now()
+                      });
+                  }
+              } catch (e) { 
+                  console.error("User profile error", e);
+                  window.handleFirestoreError(e, "create", "users/" + user.uid);
+              }
+          } else {
+              authBtn.innerHTML = 'Sign In with Google';
+              authBtn.onclick = window.signInWithGoogle;
+              authBtn.classList.remove('logged-in');
+          }
+      }
+  });
+</script>
+</body>
 </html>
 

@@ -1,0 +1,60 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile.",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "number"
+        }
+      },
+      "required": ["email", "createdAt"]
+    },
+    "SavedReport": {
+      "title": "SavedReport",
+      "description": "A saved market analysis report or query configuration.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner of the report."
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "segment": {
+          "type": "string",
+          "maxLength": 20
+        },
+        "createdAt": {
+          "type": "number"
+        },
+        "data": {
+          "type": "string",
+          "description": "JSON stringified report data or query parameters.",
+          "maxLength": 50000
+        }
+      },
+      "required": ["userId", "name", "segment", "createdAt", "data"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/User"
+      },
+      "description": "User profiles"
+    },
+    "savedReports/{reportId}": {
+      "schema": {
+        "$ref": "#/entities/SavedReport"
+      },
+      "description": "Reports saved by users"
+    }
+  }
+}

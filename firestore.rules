@@ -1,0 +1,62 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isSignedIn() { return request.auth != null && request.auth.token.email_verified == true; }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['email', 'createdAt']) &&
+             data.keys().size() == 2 &&
+             data.email is string && data.email.size() <= 200 &&
+             data.createdAt is number;
+    }
+
+    match /users/{userId} {
+      allow get: if isSignedIn() && request.auth.uid == userId;
+      allow create: if isSignedIn() &&
+                       isValidId(userId) &&
+                       request.auth.uid == userId &&
+                       isValidUser(incoming()) &&
+                       incoming().email == request.auth.token.email;
+      allow update: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       isValidUser(incoming()) &&
+                       incoming().email == existing().email &&
+                       incoming().createdAt == existing().createdAt;
+    }
+
+    function isValidSavedReport(data) {
+      return data.keys().hasAll(['userId', 'name', 'segment', 'createdAt', 'data']) &&
+             data.keys().size() == 5 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.name is string && data.name.size() <= 100 &&
+             data.segment is string && data.segment.size() <= 20 &&
+             data.createdAt is number &&
+             data.data is string && data.data.size() <= 50000;
+    }
+
+    match /savedReports/{reportId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() &&
+                       isValidId(reportId) &&
+                       isValidSavedReport(incoming()) &&
+                       incoming().userId == request.auth.uid &&
+                       exists(/databases/$(database)/documents/users/$(request.auth.uid));
+      allow update: if isSignedIn() &&
+                       isValidSavedReport(incoming()) &&
+                       existing().userId == request.auth.uid &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt;
+      allow delete: if isSignedIn() && existing().userId == request.auth.uid;
+    }
+  }
+}
