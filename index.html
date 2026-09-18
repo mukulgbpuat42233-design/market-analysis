@@ -3676,9 +3676,6 @@ async function importFile(e){
       const raw = x[meta.mcp];
       const mcpBlank = raw === null || raw === undefined || String(raw).trim() === '';
       const mcp = mcpBlank ? null : num(raw);
-          const volumeRaw = meta.volume >= 0 ? x[meta.volume] : null;
-          const volumeBlank = volumeRaw === null || volumeRaw === undefined || String(volumeRaw).trim() === '';
-          const volume = volumeBlank ? null : num(volumeRaw);
       const volumeRaw = meta.volume >= 0 ? x[meta.volume] : null;
       const volumeBlank = volumeRaw === null || volumeRaw === undefined || String(volumeRaw).trim() === '';
       const volume = volumeBlank ? null : num(volumeRaw);
@@ -3880,17 +3877,27 @@ function reportSelectedRows(){
   return S.rows.filter(x=>x.block!=null&&blocks.includes(x.block));
 }
 function reportMonthStats(rows){
-  const vals=rows.map(x=>x.mcp).filter(v=>typeof v==='number'&&Number.isFinite(v));
-  if(!vals.length) return {count:0,avg:0,max:0,min:0,maxRow:null,minRow:null,maxAudit:'N/A',minAudit:'N/A',finalAudit:'N/A'};
+  const valid=rows.filter(x=>typeof x.mcp==='number'&&Number.isFinite(x.mcp));
+  const vals=valid.map(x=>x.mcp);
+  if(!vals.length) return {count:0,avg:0,weightedAvg:0,max:0,min:0,maxRow:null,minRow:null,maxAudit:'N/A',minAudit:'N/A',finalAudit:'N/A'};
+  
+  let sumProduct=0; let sumVol=0;
+  valid.forEach(r => {
+    const vol = (typeof r.volume === 'number' && !isNaN(r.volume)) ? r.volume : 1;
+    sumProduct += r.mcp * vol;
+    sumVol += vol;
+  });
+  const weightedAvg = sumVol > 0 ? (sumProduct / sumVol) : (avg(vals) || 0);
+
   const max=Math.max(...vals);
   const positives=vals.filter(v=>v>0);
   const min=positives.length?Math.min(...positives):0;
-  const maxRow=rows.find(x=>x.mcp===max)||null;
-  const minRow=rows.find(x=>x.mcp===min)||null;
+  const maxRow=valid.find(x=>x.mcp===max)||null;
+  const minRow=valid.find(x=>x.mcp===min)||null;
   const maxAudit=max<=10000?'OK':'ERROR';
   const minAudit=min>=0?'OK':'ERROR';
   const finalAudit=maxAudit==='OK'&&minAudit==='OK'?'✓ VERIFIED':'✗ CHECK';
-  return {count:rows.length,avg:avg(vals)||0,max,min,maxRow,minRow,maxAudit,minAudit,finalAudit};
+  return {count:valid.length,avg:avg(vals)||0,weightedAvg,max,min,maxRow,minRow,maxAudit,minAudit,finalAudit};
 }
 function formulaValue(expr, ctx){
   let e=String(expr||'').trim().toUpperCase().replace(/\s+/g,'');
@@ -3956,6 +3963,7 @@ function renderSolarStyleReport(){
   const metricDefs={
     selectedBlocks:['Selected Blocks', x=>x.count?x.count.toLocaleString():'0','count'],
     avg:['Selected Average MCP (₹/MWh)', x=>fmt(x.avg),'avg'],
+    weightedAvg:['Weighted Avg (Volume) ₹/MWh', x=>fmt(x.weightedAvg),'avg'],
     max:['Maximum MCP (₹/MWh)', x=>fmt(x.max),'max'],
     min:['Minimum MCP (₹/MWh)', x=>fmt(x.min),'min'],
     maxDate:['Max MCP Date', x=>x.maxRow?formatDateDMY(x.maxRow.date):'—',''],
@@ -3970,7 +3978,7 @@ function renderSolarStyleReport(){
   };
   const selectedKeys=getSelectedMetrics();
   const groupDefs=[
-    ['Market Summary',['selectedBlocks','avg','max','min']],
+    ['Market Summary',['selectedBlocks','avg','weightedAvg','max','min']],
     ['Maximum / Minimum Details',['maxDate','maxBlock','maxTime','minDate','minBlock','minTime']],
     ['Audit Status',['maxAudit','minAudit','finalAudit']]
   ];
@@ -5821,12 +5829,12 @@ function exportExcel(){
 
   for (const [name, rows] of periodicGroups) {
     const a = [
-      ['Period', 'Record Count', 'Average MCP (₹/MWh)', 'Maximum MCP (₹/MWh)', 'Minimum MCP (₹/MWh)', 'Median MCP (₹/MWh)', 'Price Spread (₹/MWh)'],
+      ['Period', 'Record Count', 'Average MCP (₹/MWh)', 'Weighted Avg (Vol)', 'Maximum MCP (₹/MWh)', 'Minimum MCP (₹/MWh)', 'Median MCP (₹/MWh)', 'Price Spread (₹/MWh)'],
       ...rows.map(x => [x.key, x.count, x.avg, x.weightedAvg, x.max, x.min, x.median, x.spread])
     ];
     const wsPeriod = XLSX.utils.aoa_to_sheet(a);
-    wsPeriod['!cols'] = [{ wch: 16 }, { wch: 14 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 22 }];
-    applyHeader(wsPeriod, { s: { c: 0 }, e: { c: 6 } }, 0, headerStyle);
+    wsPeriod['!cols'] = [{ wch: 16 }, { wch: 14 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 22 }];
+    applyHeader(wsPeriod, { s: { c: 0 }, e: { c: 7 } }, 0, headerStyle);
 
     for (let i = 1; i < a.length; i++) {
       const rowIdx = i + 1;
@@ -5846,22 +5854,27 @@ function exportExcel(){
         wsPeriod[refAvg].s = { fill: { fgColor: { rgb: "EFF6FF" } }, font: { name: "Arial", sz: 10, bold: true, color: { rgb: "1D4ED8" } }, alignment: { horizontal: "right" }, border: thinBorder };
         wsPeriod[refAvg].z = '₹#,##0.00';
       }
-      const refMax = 'D' + rowIdx;
+      const refWAvg = 'D' + rowIdx;
+      if (wsPeriod[refWAvg]) {
+        wsPeriod[refWAvg].s = { fill: { fgColor: { rgb: "F5F3FF" } }, font: { name: "Arial", sz: 10, bold: true, color: { rgb: "6D28D9" } }, alignment: { horizontal: "right" }, border: thinBorder };
+        wsPeriod[refWAvg].z = '₹#,##0.00';
+      }
+      const refMax = 'E' + rowIdx;
       if (wsPeriod[refMax]) {
         wsPeriod[refMax].s = { fill: { fgColor: { rgb: "FEF2F2" } }, font: { name: "Arial", sz: 10, bold: true, color: { rgb: "DC2626" } }, alignment: { horizontal: "right" }, border: thinBorder };
         wsPeriod[refMax].z = '₹#,##0.00';
       }
-      const refMin = 'E' + rowIdx;
+      const refMin = 'F' + rowIdx;
       if (wsPeriod[refMin]) {
         wsPeriod[refMin].s = { fill: { fgColor: { rgb: "F0FDF4" } }, font: { name: "Arial", sz: 10, bold: true, color: { rgb: "16A34A" } }, alignment: { horizontal: "right" }, border: thinBorder };
         wsPeriod[refMin].z = '₹#,##0.00';
       }
-      const refMed = 'F' + rowIdx;
+      const refMed = 'G' + rowIdx;
       if (wsPeriod[refMed]) {
         wsPeriod[refMed].s = { fill: { fgColor: { rgb: bg } }, font: { name: "Arial", sz: 10 }, alignment: { horizontal: "right" }, border: thinBorder };
         wsPeriod[refMed].z = '₹#,##0.00';
       }
-      const refSpr = 'G' + rowIdx;
+      const refSpr = 'H' + rowIdx;
       if (wsPeriod[refSpr]) {
         wsPeriod[refSpr].s = { fill: { fgColor: { rgb: "FFFBEB" } }, font: { name: "Arial", sz: 10, bold: true, color: { rgb: "D97706" } }, alignment: { horizontal: "right" }, border: thinBorder };
         wsPeriod[refSpr].z = '₹#,##0.00';
@@ -5897,8 +5910,8 @@ function exportExcel(){
     ]);
   }
   const ws96 = XLSX.utils.aoa_to_sheet(b96);
-  ws96['!cols'] = [{ wch: 10 }, { wch: 18 }, { wch: 8 }, { wch: 12 }, { wch: 14 }, { wch: 16 }, { wch: 16 }, { wch: 16 }, { wch: 16 }, { wch: 16 }];
-  applyHeader(ws96, { s: { c: 0 }, e: { c: 9 } }, 0, headerStyle);
+  ws96['!cols'] = [{ wch: 10 }, { wch: 18 }, { wch: 8 }, { wch: 12 }, { wch: 14 }, { wch: 16 }, { wch: 16 }, { wch: 16 }, { wch: 16 }, { wch: 16 }, { wch: 16 }];
+  applyHeader(ws96, { s: { c: 0 }, e: { c: 10 } }, 0, headerStyle);
 
   for (let b = 1; b <= 96; b++) {
     const rowIdx = b + 1;
@@ -5924,22 +5937,27 @@ function exportExcel(){
       ws96[refAvg].s = { fill: { fgColor: { rgb: isSolar ? "FEF9C3" : (isPeak ? "FFEDD5" : "EFF6FF") } }, font: { name: "Arial", sz: 10, bold: true, color: { rgb: isPeak ? "C2410C" : "1D4ED8" } }, alignment: { horizontal: "right" }, border: thinBorder };
       ws96[refAvg].z = '₹#,##0.00';
     }
-    const refMax = 'G' + rowIdx;
+    const refWAvg = 'G' + rowIdx;
+    if (ws96[refWAvg]) {
+      ws96[refWAvg].s = { fill: { fgColor: { rgb: isSolar ? "FEF9C3" : (isPeak ? "FFEDD5" : "F5F3FF") } }, font: { name: "Arial", sz: 10, bold: true, color: { rgb: "6D28D9" } }, alignment: { horizontal: "right" }, border: thinBorder };
+      ws96[refWAvg].z = '₹#,##0.00';
+    }
+    const refMax = 'H' + rowIdx;
     if (ws96[refMax]) {
       ws96[refMax].s = { fill: { fgColor: { rgb: "FEF2F2" } }, font: { name: "Arial", sz: 10, bold: true, color: { rgb: "DC2626" } }, alignment: { horizontal: "right" }, border: thinBorder };
       ws96[refMax].z = '₹#,##0.00';
     }
-    const refMin = 'H' + rowIdx;
+    const refMin = 'I' + rowIdx;
     if (ws96[refMin]) {
       ws96[refMin].s = { fill: { fgColor: { rgb: "F0FDF4" } }, font: { name: "Arial", sz: 10, bold: true, color: { rgb: "16A34A" } }, alignment: { horizontal: "right" }, border: thinBorder };
       ws96[refMin].z = '₹#,##0.00';
     }
-    const refMed = 'I' + rowIdx;
+    const refMed = 'J' + rowIdx;
     if (ws96[refMed]) {
       ws96[refMed].s = { fill: { fgColor: { rgb: rowBg } }, font: { name: "Arial", sz: 10 }, alignment: { horizontal: "right" }, border: thinBorder };
       ws96[refMed].z = '₹#,##0.00';
     }
-    const refSpr = 'J' + rowIdx;
+    const refSpr = 'K' + rowIdx;
     if (ws96[refSpr]) {
       ws96[refSpr].s = { fill: { fgColor: { rgb: "FFFBEB" } }, font: { name: "Arial", sz: 10, bold: true, color: { rgb: "D97706" } }, alignment: { horizontal: "right" }, border: thinBorder };
       ws96[refSpr].z = '₹#,##0.00';
